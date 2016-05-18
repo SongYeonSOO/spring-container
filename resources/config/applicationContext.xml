@@ -18,10 +18,63 @@
 
 
 	<!-- <bean class = "com.estsoft.spring_container.User"></bean> -->
-<!-- 
+	<!-- autowired를 하기 위해 쓴다 -->
 	<context:annotation-config />
-	<context:component-scan base-package="com.estsoft.spring_container">		
-	</context:component-scan> -->
+
+	<!-- <context:component-scan base-package="com.estsoft.spring_container"> 
+		/> </context:component-scan> -->
+
+
+	<bean id="user1" class="com.estsoft.spring_container.User">
+		<constructor-arg value="constructor-argname1"></constructor-arg>
+	</bean>
+	<!-- index가 필요함 ; index를 안주면 type이 똑같으니깐 그냥 잘못된 상태로 입력됨 -->
+	<bean id="user2" class="com.estsoft.spring_container.User">
+		<constructor-arg index="0" value="constructor-argname2" />
+		<constructor-arg index="1" value="email@email.com" />
+	</bean>
+
+
+	<!-- 기본 생성자가 없기 때문에 constructor-arg를 이용해서 만들자! -->
+	<bean id="friend" class="com.estsoft.spring_container.Friend">
+		<constructor-arg value="FriendName" />
+	</bean>
+	<!-- 바깥에 friend를 생성해서 referencing한다 -->
+	<bean id="user3" class="com.estsoft.spring_container.User">
+		<constructor-arg index="0" value="constructor-argname3" />
+		<constructor-arg index="1" value="email3@email.com" />
+		<property name="friend" ref="friend" />
+	</bean>
+
+	<!-- property만 사용할 경우, argument가 있는 constructor를 사용하지 않고 기본 생성자를 통해서 생성함. 
+		기본생성자가 없는경우 error발생 -->
+	<!-- 바깥에 friend를 따로 만들고 싶지 않은 경우에는 그냥 property를 이용해서 한번만 생성함 -->
+	<bean id="user4" class="com.estsoft.spring_container.User">
+		<property name="name" value="name4" />
+		<property name="email" value="email4@email.com" />
+		<property name="friend">
+			<bean class="com.estsoft.spring_container.Friend">
+				<constructor-arg value="friend4" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- Friend를 AUTOWIRED해보자 -->
+	<bean id="guest1" class="com.estsoft.spring_container.Guest" />
 	
-	<bean id = "user1" class = "com.estsoft.spring_container.User"> <constructor-arg value="constructor-argname"></constructor-arg></bean>
+	<!-- list연습-->
+	<bean id="guest2" class="com.estsoft.spring_container.Guest">
+		<property name="users">
+			<list>
+				<ref bean="user1" />		<!-- ref bean : 내가 생성한 객체를 list에 넣자 ; bean뒤에는 id를 쓴다 -->
+				<ref bean="user2" />
+				<ref bean="user3" />
+				<ref bean="user4" />
+				<bean class="com.estsoft.spring_container.User">
+					<constructor-arg value="NewUser" />
+				</bean> <!-- bean을 내가 이 안에서 만드는 방법이 있음 -->
+			</list>
+		</property>
+	</bean>
+
 </beans> 
